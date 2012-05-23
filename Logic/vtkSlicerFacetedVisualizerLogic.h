@@ -34,12 +34,15 @@
 
 #include "vtkSlicerFacetedVisualizerModuleLogicExport.h"
 
-#include <string.h>
-#include <vector.h>
-#include <map.h>
+#include <string>
+#include <vector>
+#include <map>
 #include <utility>
 //#include <std::multimap.h>
+
+#ifndef WIN32 
 #include <multimap.h>
+#endif
 #include <vtk_sqlite3.h>
 
 #include <vtkMRMLModelHierarchyNode.h>
