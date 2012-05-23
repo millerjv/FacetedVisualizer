@@ -23,9 +23,9 @@
 
 #include "qSlicerFacetedVisualizerModuleExport.h"
 
-#include <vcl_list.h>
-#include <vcl_string.h>
-#include <vcl_vector.h>
+#include <list.h>
+#include <string.h>
+#include <vector.h>
 
 class qSlicerFacetedVisualizerModuleWidgetPrivate;
 class vtkMRMLNode;
@@ -81,17 +81,17 @@ private:
 
   unsigned int  selectedMRMLAtomIndex;
 
-  vcl_string mrmlAtom;
+  std::string mrmlAtom;
 
-  vcl_string DBAtom;
+  std::string DBAtom;
 
   //BTX
-   vcl_list< vcl_string >         queryLog;
+   std::list< std::string >         queryLog;
 
-   vcl_vector< vcl_vector< vcl_string > > matchingDBAtoms;
-   vcl_vector< vcl_string > unMatchedMRMLAtoms;
+   std::vector< std::vector< std::string > > matchingDBAtoms;
+   std::vector< std::string > unMatchedMRMLAtoms;
 
-   void GetUserMatchesForMRMLTerms(vcl_string unmatched);
+   void GetUserMatchesForMRMLTerms(std::string unmatched);
   //ETX
 
    bool                                    setDBFile;
