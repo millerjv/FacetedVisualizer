@@ -43,7 +43,9 @@
 #ifndef WIN32 
 #include <multimap.h>
 #endif
-#include <vtk_sqlite3.h>
+
+//#include "C:\NAMIC\Slicer4-SuperBuild-Debug\VTK\Utilities\vtksqlite\vtk_sqlite3.h"
+//#include <vtk_sqlite3.h>
 
 #include <vtkMRMLModelHierarchyNode.h>
 
