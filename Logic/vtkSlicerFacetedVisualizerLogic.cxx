@@ -31,9 +31,9 @@
 
 // STD includes
 #include <cassert>
-#include <vcl_string.h>
-#include <vcl_algorithm.h>
-#include <vcl_utility.h>
+#include <string.h>
+#include <algorithm>
+#include <utility>
 #include <string>
 #include <cctype>
 
@@ -46,6 +46,7 @@ vtkStandardNewMacro(vtkSlicerFacetedVisualizerLogic);
 vtkSlicerFacetedVisualizerLogic::vtkSlicerFacetedVisualizerLogic()
 {
 
+  setValidDBFileName = false;
 	// filter predicates for continuing recursive queries to DB
 	recursionPredicates.push_back("regional_part");
 	recursionPredicates.push_back("consitutional_part");
@@ -128,7 +129,7 @@ void vtkSlicerFacetedVisualizerLogic
 ///////////////////////////////////////////////////////////////////////////////////////
 
 //---------------------------------------------------------------------------
-void vtkSlicerFacetedVisualizerLogic::toLower(vcl_string origstr, vcl_string& newstr)
+void vtkSlicerFacetedVisualizerLogic::toLower(std::string origstr, std::string& newstr)
 {
    std::locale loc;
    newstr = "";
@@ -139,7 +140,7 @@ void vtkSlicerFacetedVisualizerLogic::toLower(vcl_string origstr, vcl_string& ne
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerFacetedVisualizerLogic::toUpper(vcl_string origstr, vcl_string& newstr)
+void vtkSlicerFacetedVisualizerLogic::toUpper(std::string origstr, std::string& newstr)
 {
    std::locale loc;
    newstr = "";
@@ -150,7 +151,7 @@ void vtkSlicerFacetedVisualizerLogic::toUpper(vcl_string origstr, vcl_string& ne
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerFacetedVisualizerLogic::removeLeadingFollowingSpace(vcl_string &origstr)
+void vtkSlicerFacetedVisualizerLogic::removeLeadingFollowingSpace(std::string &origstr)
 {
 
 	  size_t pos = origstr.find_first_of(" ");
@@ -172,7 +173,7 @@ void vtkSlicerFacetedVisualizerLogic::removeLeadingFollowingSpace(vcl_string &or
 
 //---------------------------------------------------------------------------
 int vtkSlicerFacetedVisualizerLogic::
-AddQueryResult(vcl_string &text, vcl_vector< vcl_string >& store)
+AddQueryResult(std::string &text, std::vector< std::string >& store)
 {
 
 	bool found = false;
@@ -192,14 +193,14 @@ AddQueryResult(vcl_string &text, vcl_vector< vcl_string >& store)
 
 
 //---------------------------------------------------------------------------
-vcl_string vtkSlicerFacetedVisualizerLogic::GetDBSubject(vcl_string &query,
+std::string vtkSlicerFacetedVisualizerLogic::GetDBSubject(std::string &query,
 		vtk_sqlite3* ptrDB)
 {
 
 	char *errmsg;
 	char **currResult;
 	int nrows, ncols;
-	vcl_string Subject = query;
+	std::string Subject = query;
 
 	char *sqlQuery = ProduceQuery(Subject, false, true,"");
 
@@ -208,7 +209,7 @@ vcl_string vtkSlicerFacetedVisualizerLogic::GetDBSubject(vcl_string &query,
 	if(nrows <= 0)
 	{
 		// check if we have an equivalent query term
-		vcl_map<vcl_string, vcl_string>::iterator rEq = eqQueryMap.find(query);
+		std::map<std::string, std::string>::iterator rEq = eqQueryMap.find(query);
 		if(rEq != eqQueryMap.end())
 		{
 			Subject = (*rEq).second;
@@ -235,7 +236,7 @@ vcl_string vtkSlicerFacetedVisualizerLogic::GetDBSubject(vcl_string &query,
 			{
 				Subject = *(currResult+(ncols+0));
 			}
-			eqQueryMap.insert(vcl_pair< vcl_string, vcl_string > (query, Subject));
+			eqQueryMap.insert(std::pair< std::string, std::string > (query, Subject));
 		}
 	}
 
@@ -246,17 +247,17 @@ vcl_string vtkSlicerFacetedVisualizerLogic::GetDBSubject(vcl_string &query,
 
 //---------------------------------------------------------------------------
 void vtkSlicerFacetedVisualizerLogic
-::GetQueryResults(vcl_vector< vcl_vector < vcl_string > > &results, vcl_vector< vcl_string > &queries)
+::GetQueryResults(std::vector< std::vector < std::string > > &results, std::vector< std::string > &queries)
 {
 
 	for (unsigned n = 0; n < resultsForDisplay.size(); ++n)
 	{
 		size_t pos = resultsForDisplay[n].find(";");
-		vcl_string q = resultsForDisplay[n].substr(0, pos);
+		std::string q = resultsForDisplay[n].substr(0, pos);
 		unsigned int index = this->AddQueryResult(q, queries);
 		if(index == results.size())
 		{
-			vcl_vector< vcl_string > newresults;
+			std::vector< std::string > newresults;
 			newresults.push_back(resultsForDisplay[n].substr(pos+1));
 			results.push_back(newresults);
 		}
@@ -269,10 +270,10 @@ void vtkSlicerFacetedVisualizerLogic
 
 
 //---------------------------------------------------------------------------
-char* vtkSlicerFacetedVisualizerLogic::ProduceQuery(vcl_string& string,
+char* vtkSlicerFacetedVisualizerLogic::ProduceQuery(std::string& string,
 		                               bool asObject,
 		                               bool asSubject,
-		                               vcl_string Predicate)
+		                               std::string Predicate)
 {
 
 	// convert string to DB form
@@ -301,8 +302,8 @@ char* vtkSlicerFacetedVisualizerLogic::ProduceQuery(vcl_string& string,
 	pos = string.find_first_of(" ");
 	while(pos != std::string::npos)
 	{
-	   vcl_string leadstr = string.substr(0, pos);
-	   vcl_string trailstr = string.substr(pos+1);
+	   std::string leadstr = string.substr(0, pos);
+	   std::string trailstr = string.substr(pos+1);
 	   string = leadstr + "_" + trailstr;
 	   pos = string.find_first_of(" ");
 	}
@@ -350,12 +351,12 @@ char* vtkSlicerFacetedVisualizerLogic::ProduceQuery(vcl_string& string,
 // syncs a given model with the Database. Checks if the model can be found in the DB
 
 void vtkSlicerFacetedVisualizerLogic::SyncModelWithDB(vtkMRMLModelHierarchyNode *modelNode,
-		vtk_sqlite3* ptrDB, vcl_vector< vcl_string > &possibleMatchingDBEntries)
+		vtk_sqlite3* ptrDB, std::vector< std::string > &possibleMatchingDBEntries)
 {
 
 	// Following is to fix working with the Abdominal atlas
-	vcl_string modelName = modelNode->GetName();
-	vcl_string lomodelName;
+	std::string modelName = modelNode->GetName();
+	std::string lomodelName;
 	this->toLower(modelName, lomodelName);
 	size_t posCheck = lomodelName.find("vtkmrmlmodelhierarchynode");
 	if(posCheck != std::string::npos)
@@ -375,7 +376,7 @@ void vtkSlicerFacetedVisualizerLogic::SyncModelWithDB(vtkMRMLModelHierarchyNode 
 	// convert the model name string in to the correct form for use in the DB.
 	// Currently we assume that in the DB, the atoms are represented as "White_matter_of_cerebellum"
 	// following the way the atoms are represented in the FMA ontology
-	vcl_string string = lomodelName;
+	std::string string = lomodelName;
 	// convert string to DB form
 	size_t pos = string.find_first_of("'");
 	if(pos != std::string::npos)
@@ -400,7 +401,7 @@ void vtkSlicerFacetedVisualizerLogic::SyncModelWithDB(vtkMRMLModelHierarchyNode 
 	}
 	string[0] = std::toupper(string[0]);
 
-	vcl_vector< vcl_string > individualStrings;
+	std::vector< std::string > individualStrings;
 	int countNonWildCardStrings = 0;
 	pos = string.find_first_of(" ");
 
@@ -410,10 +411,10 @@ void vtkSlicerFacetedVisualizerLogic::SyncModelWithDB(vtkMRMLModelHierarchyNode 
 
 	while(pos != std::string::npos)
 	{
-	   vcl_string leadstr = string.substr(0, pos);
-	   vcl_string trailstr = string.substr(pos+1);
+	   std::string leadstr = string.substr(0, pos);
+	   std::string trailstr = string.substr(pos+1);
 	   size_t p = leadstr.find_last_of("_");
-	   vcl_string tmpstr = leadstr;
+	   std::string tmpstr = leadstr;
 	   if( p != std::string::npos)
 	   {
 		   tmpstr = leadstr.substr(p+1);
@@ -458,7 +459,7 @@ void vtkSlicerFacetedVisualizerLogic::SyncModelWithDB(vtkMRMLModelHierarchyNode 
    {
 	   // parse the query string into individual parts
 	   std::cout<<" inserting into modelDB pair "<<modelName<<" : "<<modelNode->GetName()<<std::endl;
-	   mrmlDBTerms.insert(vcl_pair< vcl_string, vcl_string > (this->GetDBSubject(modelName, ptrDB), modelNode->GetName()));
+	   mrmlDBTerms.insert(std::pair< std::string, std::string > (this->GetDBSubject(modelName, ptrDB), modelNode->GetName()));
    }
    else if(individualStrings.size() > 0)
    {
@@ -467,12 +468,12 @@ void vtkSlicerFacetedVisualizerLogic::SyncModelWithDB(vtkMRMLModelHierarchyNode 
 	   unsigned int count = 1;
 	   while(!foundInDB && count < individualStrings.size()-1)
 	   {
-		   vcl_string str2 = "";
+		   std::string str2 = "";
 		   for(int s = individualStrings.size()-count-1; s >=0; s--)
 		   {
 			   str2 = individualStrings[s] + "%" + str2;
 		   }
-		   vcl_string str1 = "";
+		   std::string str1 = "";
 		   for (unsigned int s = count; s < individualStrings.size(); s++)
 		   {
 			   str1 += "%" + individualStrings[s];
@@ -497,7 +498,7 @@ void vtkSlicerFacetedVisualizerLogic::SyncModelWithDB(vtkMRMLModelHierarchyNode 
 
 			   for (int nr = 1; nr < nrows; ++nr)
 			   {
-				   vcl_string tmpstr = *(currResult+(nr*ncols));
+				   std::string tmpstr = *(currResult+(nr*ncols));
 				   this->AddQueryResult(tmpstr, possibleMatchingDBEntries);
 			   }
 		   }
@@ -505,7 +506,7 @@ void vtkSlicerFacetedVisualizerLogic::SyncModelWithDB(vtkMRMLModelHierarchyNode 
 	   if(!foundInDB)
 	   {
 		   // Add the node as a local non-DB node
-		   vcl_string modelName = modelNode->GetName();
+		   std::string modelName = modelNode->GetName();
 		   this->AddQueryResult(modelName, this->nonDBElements);
 	   }
    }
@@ -514,17 +515,38 @@ void vtkSlicerFacetedVisualizerLogic::SyncModelWithDB(vtkMRMLModelHierarchyNode 
 
 //------------------------------------------------------------------------------------
 void vtkSlicerFacetedVisualizerLogic
-::SynchronizeAtlasWithDB(vcl_vector< vcl_vector< vcl_string > > &matchingDBAtoms,
-		vcl_vector< vcl_string > &unMatchedMRMLAtoms)
+::SynchronizeAtlasWithDB(std::vector< std::vector< std::string > > &matchingDBAtoms,
+		std::vector< std::string > &unMatchedMRMLAtoms)
 {
+   
+
+   std::vector< std::string > DBModelNodes;
    // get the models in the atlas
    vtk_sqlite3 *ptrDB;
    int status = vtk_sqlite3_open(dbFileName.c_str(), &ptrDB);
    if(status != 0)
-	   return;
+   {
+	   this->setValidDBFileName = false;
+     unsigned int nmodelNodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelNode");
+     std::cout<<" Number Model Nodes "<<nmodelNodes<<std::endl;
+     // the first three are red, yellow and green slices
+     for (unsigned int n = 0; n < nmodelNodes; ++n)
+     {
+       vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(
+           this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLModelNode"));
+
+       std::string modelName = modelNode->GetName();
+       this->AddQueryResult(modelName, this->nonDBElements);
+     }
+     return;
+   }
+   else
+   {
+      this->setValidDBFileName = true;
+   }
+ 
    unsigned int nmodels = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
 
-   vcl_vector< vcl_string > DBModelNodes;
    for (unsigned int n = 0; n < nmodels; n++)
    {
 	  // get model name and check if the corresponding text exists in the database
@@ -533,7 +555,7 @@ void vtkSlicerFacetedVisualizerLogic
 
        if(modelNode->GetNumberOfChildrenNodes() == 0)
        {
-    	   vcl_string nodeID = modelNode->GetAssociatedNodeID();
+    	   std::string nodeID = modelNode->GetAssociatedNodeID();
     	   this->AddQueryResult(nodeID, DBModelNodes);
        }
        else
@@ -545,13 +567,13 @@ void vtkSlicerFacetedVisualizerLogic
 		   for (int t = 0; t < c->GetNumberOfItems(); ++t)
 		   {
 			  vtkMRMLModelNode *node = vtkMRMLModelNode::SafeDownCast(c->GetItemAsObject(t));
-			  vcl_string nodeID = node->GetID();
+			  std::string nodeID = node->GetID();
 			  this->AddQueryResult(nodeID, DBModelNodes);
 		   }
        }
-       vcl_vector< vcl_string > possibleMatchingEntries;
+       std::vector< std::string > possibleMatchingEntries;
        this->SyncModelWithDB(modelNode, ptrDB, possibleMatchingEntries);
-       vcl_string modelName = modelNode->GetName();
+       std::string modelName = modelNode->GetName();
        if(possibleMatchingEntries.size() > 0)
        {
          matchingDBAtoms.push_back(possibleMatchingEntries);
@@ -574,17 +596,13 @@ void vtkSlicerFacetedVisualizerLogic
 	   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(
 			   this->GetMRMLScene()->GetNthNodeByClass(n, "vtkMRMLModelNode"));
 
-	   vcl_string modelName = modelNode->GetName();
-	   vcl_string modelID = modelNode->GetID();
+	   std::string modelName = modelNode->GetName();
+	   std::string modelID = modelNode->GetID();
 
 	   bool foundNode = false;
 	   for (unsigned m = 0; !foundNode && m < DBModelNodes.size(); ++m)
 	   {
 		   foundNode = DBModelNodes[m] == modelID;
-	   }
-	   if(strcmp(modelName.c_str(), "mass") == 0 || strcmp(modelName.c_str(), "necrosis") == 0)
-	   {
-		   std::cout<<" found a dB node for MASS or NECROSIS "<<foundNode<<std::endl;
 	   }
 	   if(!foundNode)
 	   {
@@ -605,7 +623,7 @@ void vtkSlicerFacetedVisualizerLogic
 int vtkSlicerFacetedVisualizerLogic::RecursiveProcessQuery(char* sqlquery,
 		                              vtk_sqlite3* ptrDB,
 		                              bool queryAsSubject,
-		                              vcl_vector< vcl_string > &displayTerms)
+		                              std::vector< std::string > &displayTerms)
 {
 
 	char *errmsg;
@@ -613,7 +631,7 @@ int vtkSlicerFacetedVisualizerLogic::RecursiveProcessQuery(char* sqlquery,
 	int nrows, ncols;
 
 	vtk_sqlite3_get_table(ptrDB, sqlquery, &currResult, &nrows, &ncols, &errmsg);
-	vcl_vector< vcl_string > recursionSubjects;
+	std::vector< std::string > recursionSubjects;
 
 	if(nrows > 0)
 	{
@@ -624,11 +642,11 @@ int vtkSlicerFacetedVisualizerLogic::RecursiveProcessQuery(char* sqlquery,
 		return -1;
 	}
 
-	vcl_string query = sqlquery;
+	std::string query = sqlquery;
 
 	size_t p1 = query.find(" SUBJECT = ");
 
-	vcl_string querySubject = "";
+	std::string querySubject = "";
 	if(p1 != std::string::npos)
 	{
 		querySubject = query.substr(p1+12);
@@ -645,18 +663,18 @@ int vtkSlicerFacetedVisualizerLogic::RecursiveProcessQuery(char* sqlquery,
 		for (int nr = 1; nr <= nrows; nr++)
 		{
 
-			vcl_string rowResult;
+			std::string rowResult;
 			bool displayResult = false;
 			bool DontAddToResults = false;
-			vcl_vector< vcl_string> term;
+			std::vector< std::string> term;
 			term.resize(3);
 			for (int nc = 0; nc < ncols; ++nc)
 			{
 				term[nc] = *(currResult+(nr*ncols+nc));
 			}
 
-			vcl_pair< std::multimap< vcl_string, vcl_string >::iterator,
-			          std::multimap< vcl_string, vcl_string > ::iterator > mrmlIt;
+			std::pair< std::multimap< std::string, std::string >::iterator,
+			          std::multimap< std::string, std::string > ::iterator > mrmlIt;
 			if(!queryAsSubject)
 			{
 			  mrmlIt = mrmlDBTerms.equal_range(this->GetDBSubject(term[0], ptrDB)); //mrmlDBTerms.find(this->GetDBSubject(term[0], ptrDB));
@@ -665,12 +683,12 @@ int vtkSlicerFacetedVisualizerLogic::RecursiveProcessQuery(char* sqlquery,
 			{
 				mrmlIt = mrmlDBTerms.equal_range(this->GetDBSubject(term[0], ptrDB));//mrmlDBTerms.find(this->GetDBSubject(term[2], ptrDB));
 			}
-			std::multimap< vcl_string, vcl_string >::iterator itr1 = mrmlIt.first;
-			std::multimap< vcl_string, vcl_string >::iterator itr2 = mrmlIt.second;
+			std::multimap< std::string, std::string >::iterator itr1 = mrmlIt.first;
+			std::multimap< std::string, std::string >::iterator itr2 = mrmlIt.second;
 
 			if(itr1 != mrmlDBTerms.end())
 			{
-				std::multimap< vcl_string, vcl_string >::iterator itMRML;
+				std::multimap< std::string, std::string >::iterator itMRML;
 				for(itMRML = itr1; itMRML != itr2; ++itMRML)
 				{
 					this->AddQueryResult(itMRML->second, displayTerms);
@@ -686,8 +704,8 @@ int vtkSlicerFacetedVisualizerLogic::RecursiveProcessQuery(char* sqlquery,
 				// check if the object term needs to be recursed. We need recursion only when we don't have
 				// display nodes attached to it
 				bool foundDisplayNode = false;
-				vcl_pair< std::multimap< vcl_string, int>::iterator,
-					          std::multimap< vcl_string, int > ::iterator> ret;
+				std::pair< std::multimap< std::string, int>::iterator,
+					          std::multimap< std::string, int > ::iterator> ret;
 				if(queryAsSubject)
 				{
 					ret =queryCacheMap.equal_range(term[2]);
@@ -697,19 +715,19 @@ int vtkSlicerFacetedVisualizerLogic::RecursiveProcessQuery(char* sqlquery,
 					ret = queryCacheMap.equal_range(term[1]);
 				}
 
-				std::multimap< vcl_string, int >::iterator itrF = ret.first;
-				std::multimap< vcl_string, int >::iterator itrS = ret.second;
+				std::multimap< std::string, int >::iterator itrF = ret.first;
+				std::multimap< std::string, int >::iterator itrS = ret.second;
 
 
 				if(itrF != queryCacheMap.end())
 				{
-					std::multimap<vcl_string, int > ::iterator itr;
+					std::multimap<std::string, int > ::iterator itr;
 					for(itr = ret.first; itr != ret.second; ++itr)
 					{
-						vcl_string t = queryResultCache[(*itr).second];
+						std::string t = queryResultCache[(*itr).second];
 						size_t p1 = t.find(";");
 						size_t p2 = t.find_last_of(";");
-						vcl_string predicate = t.substr(p1+1, p2);
+						std::string predicate = t.substr(p1+1, p2);
 						if(!foundDisplayNode)
 						{
 							foundDisplayNode = predicate == "mrmlName"; //std::strcmp(predicate.c_str(),"mrmlName") == 0;
@@ -754,15 +772,15 @@ int vtkSlicerFacetedVisualizerLogic::RecursiveProcessQuery(char* sqlquery,
 
 
 //----------------------------------------------------------------------------------------------
-int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_sqlite3* ptrDB,
-		vcl_vector< vcl_string > &queryResults, vcl_vector< vcl_string > &displayTerms)
+int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(std::string& query, vtk_sqlite3* ptrDB,
+		std::vector< std::string > &queryResults, std::vector< std::string > &displayTerms)
 {
 
 	// first check if its a two-part query
 	size_t pos = query.find(";");
 	bool twoPartQuery = pos != std::string::npos;
-	vcl_string firstPart = query;
-	vcl_string secondPart = "";
+	std::string firstPart = query;
+	std::string secondPart = "";
 	std::cout<<" query is "<<query<<std::endl;
 	if(twoPartQuery)
 	{
@@ -772,16 +790,16 @@ int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_s
 	}
 	else
 	{
-		//vcl_map< vcl_string, vcl_string > ::iterator mrmlIt = mrmlDBTerms.find(this->GetDBSubject(firstPart, ptrDB));
-		vcl_pair< std::multimap< vcl_string, vcl_string >::iterator,
-					          std::multimap< vcl_string, vcl_string > ::iterator > mrmlIt;
+		//std::map< std::string, std::string > ::iterator mrmlIt = mrmlDBTerms.find(this->GetDBSubject(firstPart, ptrDB));
+		std::pair< std::multimap< std::string, std::string >::iterator,
+					          std::multimap< std::string, std::string > ::iterator > mrmlIt;
 		mrmlIt = mrmlDBTerms.equal_range(this->GetDBSubject(firstPart, ptrDB));
-		std::multimap< vcl_string, vcl_string >::iterator itr1 = mrmlIt.first;
-		std::multimap<vcl_string, vcl_string>::iterator itr2 = mrmlIt.second;
+		std::multimap< std::string, std::string >::iterator itr1 = mrmlIt.first;
+		std::multimap<std::string, std::string>::iterator itr2 = mrmlIt.second;
 
 		if(itr1 != mrmlDBTerms.end())
 		{
-			std::multimap<vcl_string, vcl_string>::iterator itr3;
+			std::multimap<std::string, std::string>::iterator itr3;
 			for(itr3 = itr1; itr3 != itr2; ++itr3)
 			{
 				this->AddQueryResult(itr3->second, displayTerms);
@@ -796,8 +814,8 @@ int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_s
 		int indx = 0;
 		for (unsigned int l = 0; !found && l < nonDBElements.size(); l++)
 		{
-			vcl_string lqdb;
-			vcl_string lqQ;
+			std::string lqdb;
+			std::string lqQ;
 			this->toLower(nonDBElements[l], lqdb);
 			this->toLower(query, lqQ);
 			found = lqdb == lqQ;
@@ -809,17 +827,20 @@ int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_s
 			return 0;
 		}
 	}
-
+  if(!this->setValidDBFileName)
+  {
+    return -1;
+  }
 	// check if the query is in the cache
 	// Cache logic commented out as it is not functionality is not fully tested. HV
-//	vcl_pair< std::multimap< vcl_string, int>::iterator,
-//	          std::multimap< vcl_string, int > ::iterator> ret =
+//	std::pair< std::multimap< std::string, int>::iterator,
+//	          std::multimap< std::string, int > ::iterator> ret =
 //	                        queryCacheMap.equal_range(firstPart);
-//	std::multimap< vcl_string, int >::iterator itr = ret.first;
+//	std::multimap< std::string, int >::iterator itr = ret.first;
 //	if(itr == queryCacheMap.end())
 //	{
 //		// check if the equivalent query is present
-//		vcl_map< vcl_string, vcl_string > ::iterator iteq = eqQueryMap.find(firstPart);
+//		std::map< std::string, std::string > ::iterator iteq = eqQueryMap.find(firstPart);
 //		if(iteq != eqQueryMap.end())
 //		{
 //			ret = queryCacheMap.equal_range((*iteq).second);
@@ -836,29 +857,29 @@ int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_s
 //		if(itr != queryCacheMap.end())
 //		{
 //			std::cout<<" found query in cache "<<std::endl;
-//			//std::multimap<vcl_string, int > ::iterator itr;
+//			//std::multimap<std::string, int > ::iterator itr;
 //			bool foundSecondInCache = false;
 //
 //			for(itr = ret.first; itr != ret.second; ++itr)
 //			{
-//				vcl_string term = queryResultCache[(*itr).second];
+//				std::string term = queryResultCache[(*itr).second];
 //				size_t p1 = term.find(";");
 //				size_t p2 = term.find_last_of(";");
-//				vcl_string predicate = term.substr(p1+1, p2-1);
+//				std::string predicate = term.substr(p1+1, p2-1);
 //
 //				foundSecondInCache = predicate == secondPart; //(std::strcmp(predicate,secondPart) == 0);
 //				if(foundSecondInCache)
 //			    {
 //					std::cout<<" adding term to results : "<<term<<std::endl;
 //				   //this->AddQueryResult(term, queryResults);
-//				   vcl_string tmpstr = term.substr(p2+1);
+//				   std::string tmpstr = term.substr(p2+1);
 //				   this->AddQueryResult(tmpstr, displayTerms);
 //				}
 //			}
 //			if(!foundSecondInCache)
 //			{
 //				// we need to search for the query in the DB
-//				vcl_string subject = this->GetDBSubject(firstPart, ptrDB);
+//				std::string subject = this->GetDBSubject(firstPart, ptrDB);
 //				if(subject == "null")
 //				{
 //					return -1;
@@ -871,7 +892,7 @@ int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_s
 //		}
 //		else
 //		{
-			vcl_string subject = this->GetDBSubject(firstPart, ptrDB);
+			std::string subject = this->GetDBSubject(firstPart, ptrDB);
 			if(subject == "null")
 			{
 				return -1;
@@ -888,10 +909,10 @@ int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_s
 		{
 			return -1;
 		}
-		vcl_vector< vcl_string > relations;
+		std::vector< std::string > relations;
 		for (int nr = 1; nr <= nrows; ++nr)
 		{
-			vcl_vector< vcl_string> term;
+			std::vector< std::string> term;
 			term.resize(3);
 			for (int nc = 0; nc < ncols; ++nc)
 			{
@@ -902,7 +923,7 @@ int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_s
 
 			for (unsigned np= 0; addToResults && np < ignorePredicates.size(); ++np)
 			{
-				vcl_string lstr;
+				std::string lstr;
 				this->toLower(term[1], lstr);
 				addToResults = ignorePredicates[np] == lstr ? false : true; //std::strcmp(ignorePredicates,lstr) == 0;
 			}
@@ -922,7 +943,7 @@ int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_s
 				{
 					if(term[1] == secondPart)
 					{
-						vcl_string tmpstr = term[0]+";"+term[2];
+						std::string tmpstr = term[0]+";"+term[2];
 						this->AddQueryResult(tmpstr, queryResults);
 					}
 						// check if its a comment predicate
@@ -933,7 +954,7 @@ int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_s
 					}
 					if(isCommentPredicate)
 					{
-						vcl_string tmpstr = term[0] +";comment;"+term[2];
+						std::string tmpstr = term[0] +";comment;"+term[2];
 						this->AddQueryResult(tmpstr, queryResults);
 					}
 
@@ -946,10 +967,10 @@ int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_s
 	{
 	   // there is no second part to the query
 	   // for display, we only need to check the recursion predicates
-	   vcl_string subject = this->GetDBSubject(firstPart, ptrDB);
+	   std::string subject = this->GetDBSubject(firstPart, ptrDB);
 	   for (unsigned n = 0; n < recursionPredicates.size(); ++n)
 	   {
-		    vcl_string tmpstr = subject+";"+recursionPredicates[n];
+		    std::string tmpstr = subject+";"+recursionPredicates[n];
 		    std::cout<<" re-process as two-part query "<<tmpstr<<std::endl;
 			ProcessSingleQuery(tmpstr, ptrDB, queryResults, displayTerms);
 	   }
@@ -968,10 +989,10 @@ int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_s
 		{
 			return -1;
 		}
-		vcl_vector< vcl_string > relations;
+		std::vector< std::string > relations;
 		for (int nr = 1; nr <= nrows; ++nr)
 		{
-			vcl_vector< vcl_string> term;
+			std::vector< std::string> term;
 			term.resize(3);
 			for (int nc = 0; nc < ncols; ++nc)
 			{
@@ -982,7 +1003,7 @@ int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_s
 
 			for (unsigned np= 0; addToResults && np < ignorePredicates.size(); ++np)
 			{
-				vcl_string lstr;
+				std::string lstr;
 				this->toLower(term[1], lstr);
 				addToResults = ignorePredicates[np] == lstr ? false : true; //std::strcmp(ignorePredicates,lstr) == 0;
 			}
@@ -1008,12 +1029,12 @@ int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_s
 					}
 					if(isCommentPredicate)
 					{
-						vcl_string tmpstr = term[0] +";comment;"+term[2];
+						std::string tmpstr = term[0] +";comment;"+term[2];
 						this->AddQueryResult(tmpstr, queryResults);
 					}
 					else
 					{
-						vcl_string tmpstr = term[0] + ";" + term[1];
+						std::string tmpstr = term[0] + ";" + term[1];
 						this->AddQueryResult(tmpstr, relations);
 					}
 				}
@@ -1034,32 +1055,32 @@ int vtkSlicerFacetedVisualizerLogic::ProcessSingleQuery(vcl_string& query, vtk_s
 //-----------------------------------------------------------------------------------------
 // Currently not used due to lack of full testing. -- HV
 int vtkSlicerFacetedVisualizerLogic::
-ManageQueryCache(vcl_vector< vcl_string > &queries, vcl_string query , vcl_vector< vcl_string > & queryResults)
+ManageQueryCache(std::vector< std::string > &queries, std::string query , std::vector< std::string > & queryResults)
 {
 	int spaceNeeded = queryResults.size();
 	int spaceRemaining = cacheSize - queryResultCache.size();
 	if(spaceRemaining >= spaceNeeded)
 	{
-		queryResultAge.insert(vcl_pair< vcl_string, int > (query, 0));
+		queryResultAge.insert(std::pair< std::string, int > (query, 0));
 		for(int n = 0; n < spaceNeeded; ++n)
 		{
 			queryResultCache.push_back(queryResults[n]);
 
-			queryCacheMap.insert(vcl_pair< vcl_string, int >(query, queryResultCache.size()-1));
+			queryCacheMap.insert(std::pair< std::string, int >(query, queryResultCache.size()-1));
 		}
 	}
 	else
 	{
 		int newSpace = 0;
 		bool queryFoundForCleanup = true;
-		vcl_vector< unsigned int > queryResultIndices;
+		std::vector< unsigned int > queryResultIndices;
 		while(newSpace < spaceNeeded && queryFoundForCleanup)
 		{
 			// need to clean up cache for the new query
 			queryFoundForCleanup = false;
 			int oldestQueryAge = 0;
-			vcl_string oldestQuery ="";
-			for (vcl_map<vcl_string, int > ::iterator it = queryResultAge.begin();
+			std::string oldestQuery ="";
+			for (std::map<std::string, int > ::iterator it = queryResultAge.begin();
 					it != queryResultAge.end(); ++it)
 			{
 				if(it->second < 2)
@@ -1087,15 +1108,15 @@ ManageQueryCache(vcl_vector< vcl_string > &queries, vcl_string query , vcl_vecto
 			if(queryFoundForCleanup)
 			{
 				// find the corresponding results for this query and create space in those indices
-				vcl_pair< std::multimap< vcl_string, int >::iterator,
-					      std::multimap< vcl_string, int >::iterator > r =
+				std::pair< std::multimap< std::string, int >::iterator,
+					      std::multimap< std::string, int >::iterator > r =
 					    		  queryCacheMap.equal_range(oldestQuery);
 
-				std::multimap<vcl_string, int > ::iterator itr = r.first;
+				std::multimap<std::string, int > ::iterator itr = r.first;
 				if(itr != queryCacheMap.end())
 				{
 
-					//std::multimap<vcl_string, int > ::iterator itr;
+					//std::multimap<std::string, int > ::iterator itr;
 					for (itr = r.first; itr != r.second; ++itr)
 					{
 						queryResultIndices.push_back((*itr).second);
@@ -1108,7 +1129,7 @@ ManageQueryCache(vcl_vector< vcl_string > &queries, vcl_string query , vcl_vecto
 				newSpace = queryResultIndices.size();
 			}
 		}
-		vcl_vector< vcl_string > tempQueryResults;
+		std::vector< std::string > tempQueryResults;
 		for (unsigned int r = 0; r < queryResultCache.size(); ++r)
 		{
 			bool found = false;
@@ -1124,12 +1145,12 @@ ManageQueryCache(vcl_vector< vcl_string > &queries, vcl_string query , vcl_vecto
 		queryResultCache.swap(tempQueryResults);
 		if(newSpace >= spaceNeeded)
 		{
-			queryResultAge.insert(vcl_pair< vcl_string, int > (query, 0));
+			queryResultAge.insert(std::pair< std::string, int > (query, 0));
 			for(int n = 0; n < spaceNeeded; ++n)
 			{
 				queryResultCache.push_back(queryResults[n]);
 
-				queryCacheMap.insert(vcl_pair< vcl_string, int >(query, queryResultCache.size()-1));
+				queryCacheMap.insert(std::pair< std::string, int >(query, queryResultCache.size()-1));
 			}
 		}
 	}
@@ -1146,7 +1167,7 @@ bool vtkSlicerFacetedVisualizerLogic
 ::ProcessQuery()
 {
 
-	for(vcl_map<vcl_string,int>::iterator it = queryResultAge.begin();
+	for(std::map<std::string,int>::iterator it = queryResultAge.begin();
 				it != queryResultAge.end(); ++it)
 	{
 		it->second = it->second + 1;
@@ -1158,7 +1179,7 @@ bool vtkSlicerFacetedVisualizerLogic
 
 	resultsForDisplay.clear();
 
-	vcl_vector< vcl_string > queries;
+	std::vector< std::string > queries;
 
 	bool isSimpleQuery = false;
     // first split the query if this is a complex query
@@ -1168,13 +1189,13 @@ bool vtkSlicerFacetedVisualizerLogic
     	foundPos = this->query.find(",");
     	isSimpleQuery = (foundPos == std::string::npos);
     }
-    vcl_string qstring = query;
+    std::string qstring = query;
     if(!isSimpleQuery)
     {
     	while(foundPos != std::string::npos)
     	{
-    		vcl_string q = qstring.substr(0, foundPos);
-    		vcl_string lq;
+    		std::string q = qstring.substr(0, foundPos);
+    		std::string lq;
     		this->toLower(q, lq);
     		this->removeLeadingFollowingSpace(lq);
     		queries.push_back(lq);
@@ -1194,7 +1215,7 @@ bool vtkSlicerFacetedVisualizerLogic
     }
     else
     {
-    	vcl_string lowerQ;
+    	std::string lowerQ;
     	this->toLower(query, lowerQ);
     	queries.push_back(lowerQ);
     }
@@ -1203,22 +1224,22 @@ bool vtkSlicerFacetedVisualizerLogic
     // If yes, lets just add a "more info" branch to the query and continue
     // add "click more info to get more information about query" in the comment box
 
-    //vcl_vector< vcl_vector< vcl_string > > allqueryResults;
+    //std::vector< std::vector< std::string > > allqueryResults;
     //int cacheStatus = 0;
-    vcl_vector< vcl_string > queryDisplayResults;
+    std::vector< std::string > queryDisplayResults;
 
 
 	for (unsigned n = 0; n < queries.size(); n++)
     {
-		vcl_vector< vcl_string > queryResults;
-		vcl_vector< vcl_string > cacheResults;
-		vcl_string q = queries[n];
+		std::vector< std::string > queryResults;
+		std::vector< std::string > cacheResults;
+		std::string q = queries[n];
 
 		size_t pos = q.find(";");
-		if(pos != std::string::npos)
+		if(pos != std::string::npos && this->setValidDBFileName)
 		{
-			vcl_string firstPart = q.substr(0, pos);
-			vcl_string secondPart = q.substr(pos+1);
+			std::string firstPart = q.substr(0, pos);
+			std::string secondPart = q.substr(pos+1);
 			char *errmsg;
 			char **qResult;
 			int numrows, numcols;
@@ -1230,7 +1251,7 @@ bool vtkSlicerFacetedVisualizerLogic
 				queries[n] = secondPart;
 			}
 		}
-		vcl_vector< vcl_string > displayTerms;
+		std::vector< std::string > displayTerms;
 		int status = ProcessSingleQuery(q, ptrDB, queryResults, displayTerms);
 
 		for (unsigned i = 0; i < queryResults.size(); ++i)
@@ -1239,12 +1260,12 @@ bool vtkSlicerFacetedVisualizerLogic
 			size_t p1 = q.find(";");
 			if(p1 != std::string::npos)
 			{
-			   vcl_string tmpstr = q.substr(0,p1)+"-"+q.substr(p1+1)+queryResults[i].substr(pos);
+			   std::string tmpstr = q.substr(0,p1)+"-"+q.substr(p1+1)+queryResults[i].substr(pos);
 			   resultsForDisplay.push_back(tmpstr);
 			}
 			else
 			{
-			  vcl_string tmpstr = q+queryResults[i].substr(pos);
+			  std::string tmpstr = q+queryResults[i].substr(pos);
 			  resultsForDisplay.push_back(tmpstr);
 			}
 		}
@@ -1262,12 +1283,12 @@ bool vtkSlicerFacetedVisualizerLogic
 			   size_t p = q.find(";");
 			   if(p == std::string::npos)
 			   {
-				   vcl_string tmpstr = q+";"+recursionPredicates[0]+";"+displayTerms[d];
+				   std::string tmpstr = q+";"+recursionPredicates[0]+";"+displayTerms[d];
 				   this->AddQueryResult(tmpstr, cacheResults);
 			   }
 			   else
 			   {
-				   vcl_string tmpstr = q+";"+displayTerms[d];
+				   std::string tmpstr = q+";"+displayTerms[d];
 				   this->AddQueryResult(tmpstr, cacheResults);
 			   }
 			}
@@ -1279,8 +1300,8 @@ bool vtkSlicerFacetedVisualizerLogic
     }
 
 	std::cout<<" query results "<<std::endl;
-	vcl_vector< vcl_vector< vcl_string > > qResults;
-	vcl_vector< vcl_string > allQueries;
+	std::vector< std::vector< std::string > > qResults;
+	std::vector< std::string > allQueries;
 	this->GetQueryResults(qResults, allQueries);
 	for (unsigned n = 0; n < allQueries.size(); n++)
 	{
@@ -1317,14 +1338,14 @@ bool vtkSlicerFacetedVisualizerLogic
 	// disable display of all user nodes
 	for (unsigned n = 0; n < this->nonDBElements.size(); ++n)
 	{
-		vcl_string name = nonDBElements[n];
+		std::string name = nonDBElements[n];
 		vtkSmartPointer<vtkCollection> mnodes = vtkSmartPointer<vtkCollection>::New();
 				mnodes = this->GetMRMLScene()->GetNodesByClassByName("vtkMRMLModelNode",
 						name.c_str());
 		for(int j = 0; j < mnodes->GetNumberOfItems(); ++j)
 		{
 			vtkMRMLModelNode *node = vtkMRMLModelNode::SafeDownCast(mnodes->GetItemAsObject(j));
-			vcl_string nodeName = node->GetName();
+			std::string nodeName = node->GetName();
 			if(name == nodeName)
 			{
 				node->SetDisplayVisibility(0);
