@@ -1,4 +1,4 @@
-project(vtkSlicer${qt_module_name}ModuleLogic)
+project(vtkSlicer${EXTENSION_NAME}ModuleLogic)
 
 #
 # See CMake/SlicerMacroBuildModuleLogic.cmake for details
@@ -27,8 +27,6 @@ set(module_logic_target_libraries
   ${ITK_LIBRARIES}
   )
   
-#INCLUDE_DIRECTORIES( ${VTK_SOURCE_DIR}/Utilities/vtksqlite )
-
 SlicerMacroBuildModuleLogic(
   NAME ${module_logic_name}
   EXPORT_DIRECTIVE ${module_logic_export_directive}
