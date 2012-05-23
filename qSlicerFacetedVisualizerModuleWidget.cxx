@@ -32,8 +32,8 @@
 #include "vtkSlicerFacetedVisualizerLogic.h"
 
 
-#include <vcl_vector.h>
-#include <vcl_string.h>
+#include <vector.h>
+#include <string.h>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_FacetedVisualizer
@@ -225,7 +225,7 @@ void qSlicerFacetedVisualizerModuleWidget::onTreeItemSelected(const QItemSelecti
 	}
 	QString parentText = currParent.data(Qt::DisplayRole).toString();
 	std::cout<<"Selected text "<<selectedText.toStdString()<<" parent node "<<parentText.toStdString()<<std::endl;
-	vcl_string ptext = parentText.toStdString();
+	std::string ptext = parentText.toStdString();
 	size_t pos = ptext.find("-");
 	if(pos == std::string::npos)
 	{
@@ -241,8 +241,8 @@ void qSlicerFacetedVisualizerModuleWidget::UpdateResultsTree(bool visualizedResu
 	Q_D(qSlicerFacetedVisualizerModuleWidget);
 	vtkSlicerFacetedVisualizerLogic *logic = d->logic();
 
-	vcl_vector< vcl_string > queries;
-	vcl_vector< vcl_vector< vcl_string > > queryResults;
+	std::vector< std::string > queries;
+	std::vector< std::vector< std::string > > queryResults;
 
 	logic->GetQueryResults(queryResults, queries);
 
@@ -255,13 +255,13 @@ void qSlicerFacetedVisualizerModuleWidget::UpdateResultsTree(bool visualizedResu
 	{
 		QStandardItem *qItem = new QStandardItem(QString::fromStdString(queries[n]));
 		rootNode->appendRow(qItem);
-		vcl_vector< vcl_string > comments;
+		std::vector< std::string > comments;
 		for (unsigned nr = 0; nr < queryResults[n].size(); nr++)
 		{
 			size_t pos = queryResults[n][nr].find(";");
 			if(pos != std::string::npos)
 			{
-				vcl_string pred = queryResults[n][nr].substr(0, pos);
+				std::string pred = queryResults[n][nr].substr(0, pos);
 				if(visualizedResults)
 				{
 					size_t p1 = pred.find("comment");
@@ -269,13 +269,13 @@ void qSlicerFacetedVisualizerModuleWidget::UpdateResultsTree(bool visualizedResu
 					{
 						p1 = queryResults[n][nr].substr(pos).find(";");
 
-						vcl_string str = (queryResults[n][nr].substr(pos)).substr(p1+1)+"\n";
+						std::string str = (queryResults[n][nr].substr(pos)).substr(p1+1)+"\n";
 						comments.push_back(str);
 					}
 				}
 				else
 				{
-					vcl_string str = queryResults[n][nr].substr(pos+1)+"  \n";
+					std::string str = queryResults[n][nr].substr(pos+1)+"  \n";
 					comments.push_back(str);
 				}
 			}
@@ -292,7 +292,7 @@ void qSlicerFacetedVisualizerModuleWidget::UpdateResultsTree(bool visualizedResu
 			  //}
 			}
 		}
-		vcl_string str = "\n"+queries[n]+"\n--";
+		std::string str = "\n"+queries[n]+"\n--";
 		text += QString::fromStdString(str);
 		if(comments.size() > 0)
 		{
@@ -321,7 +321,7 @@ void qSlicerFacetedVisualizerModuleWidget::UpdateQueryLogView()
 	QStandardItemModel *standardModel = new QStandardItemModel;
 	QStandardItem *rootNode = standardModel->invisibleRootItem();
 
-	vcl_list< vcl_string>::iterator it;
+	std::list< std::string>::iterator it;
 	for(it = queryLog.begin(); it != queryLog.end(); ++it)
 	{
 		QStandardItem *qItem = new QStandardItem(QString::fromStdString(*it));
@@ -421,7 +421,7 @@ void qSlicerFacetedVisualizerModuleWidget::onMRMLAtomChanged(const QString &text
 
 //-----------------------------------------------------------------------------
 void qSlicerFacetedVisualizerModuleWidget::
-GetUserMatchesForMRMLTerms(vcl_string unmatched)
+GetUserMatchesForMRMLTerms(std::string unmatched)
 {
 
 	Q_D(qSlicerFacetedVisualizerModuleWidget);
