@@ -23,9 +23,9 @@
 
 #include "qSlicerFacetedVisualizerModuleExport.h"
 
-#include <list.h>
-#include <string.h>
-#include <vector.h>
+#include <list>
+#include <string>
+#include <vector>
 
 class qSlicerFacetedVisualizerModuleWidgetPrivate;
 class vtkMRMLNode;
