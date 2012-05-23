@@ -31,7 +31,7 @@
 
 // STD includes
 #include <cassert>
-#include <string.h>
+#include <string>
 #include <algorithm>
 #include <utility>
 #include <string>
