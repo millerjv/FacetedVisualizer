@@ -32,8 +32,8 @@
 #include "vtkSlicerFacetedVisualizerLogic.h"
 
 
-#include <vector.h>
-#include <string.h>
+#include <vector>
+#include <string>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_FacetedVisualizer
