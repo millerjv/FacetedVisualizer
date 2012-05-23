@@ -21,10 +21,10 @@ set(EXTENSION_NAME FacetedVisualizer)
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
-  set(EXTENSION_CATEGORY "Examples")
+  set(EXTENSION_CATEGORY "Loadable module extension")
   set(EXTENSION_STATUS "Beta")
-  set(EXTENSION_DESCRIPTION "This is an example of Qt loadable module built as an extension")
-  set(EXTENSION_DEPENDS CLIExtensionTemplate) # Specified as a space separated list or 'NA' if any
+  set(EXTENSION_DESCRIPTION "Faceted visualizer that combines ontology with 3D atlas")
+  set(EXTENSION_DEPENDS CLIExtensionTemplate ) # Specified as a space separated list or 'NA' if any
 
   find_package(Slicer REQUIRED)
 
@@ -82,8 +82,10 @@ set(qt_module_UI_SRCS
 # Additional Target libraries
 set(qt_module_target_libraries
   vtkSlicerFacetedVisualizerModuleLogic
-  )
+ )
+
 INCLUDE_DIRECTORIES( ${VTK_SOURCE_DIR}/Utilities/vtksqlite )
+
 # Resources
 set(qt_module_resources
   Resources/qSlicerFacetedVisualizerModule.qrc
@@ -94,7 +96,7 @@ slicerMacroBuildQtModule(
 #  NAME ${qt_module_name}
   TITLE ${qt_module_title}
   EXPORT_DIRECTIVE ${qt_module_export_directive}
-  INCLUDE_DIRECTORIES ${qt_module_include_directories}
+  INCLUDE_DIRECTORIES ${qt_module_include_directories} 
   SRCS ${qt_module_SRCS}
   MOC_SRCS ${qt_module_MOC_SRCS}
   UI_SRCS ${qt_module_UI_SRCS}
