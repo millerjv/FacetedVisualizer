@@ -34,10 +34,10 @@
 
 #include "vtkSlicerFacetedVisualizerModuleLogicExport.h"
 
-#include <vcl_string.h>
-#include <vcl_vector.h>
-#include <vcl_map.h>
-#include <vcl_utility.h>
+#include <string.h>
+#include <vector.h>
+#include <map.h>
+#include <utility>
 //#include <std::multimap.h>
 #include <multimap.h>
 #include <vtk_sqlite3.h>
@@ -58,33 +58,34 @@ public:
   bool ProcessQuery();
 
  //BTX
-  void SynchronizeAtlasWithDB(vcl_vector< vcl_vector< vcl_string > >&matchingDBAtoms,
-   		  vcl_vector< vcl_string > &unMatchedMRMLAtoms);
+  void SynchronizeAtlasWithDB(std::vector< std::vector< std::string > >&matchingDBAtoms,
+   		  std::vector< std::string > &unMatchedMRMLAtoms);
 
-  void GetQueryResults( vcl_vector< vcl_vector < vcl_string > > &results,
-     		vcl_vector< vcl_string> &queries);
+  void GetQueryResults( std::vector< std::vector < std::string > > &results,
+     		std::vector< std::string> &queries);
 
-  void SetCorrespondingDBTermforMRMLNode(vcl_string DBAtom, vcl_string mrmlNode)
+  void SetCorrespondingDBTermforMRMLNode(std::string DBAtom, std::string mrmlNode)
   {
-   	  mrmlDBTerms.insert(vcl_pair< vcl_string, vcl_string> (DBAtom, mrmlNode));
+   	  mrmlDBTerms.insert(std::pair< std::string, std::string> (DBAtom, mrmlNode));
   }
 //ETX
 
-  //void AddQueryResultToCache(vcl_string &text);
+  //void AddQueryResultToCache(std::string &text);
 
   
-  void SetDBFileName(vcl_string fname)
+  void SetDBFileName(std::string fname)
   {
 	  dbFileName = fname;
+          setValidDBFileName = true;
   }
 
 
-  void SetQuery(vcl_string newquery)
+  void SetQuery(std::string newquery)
   {
 	  query = newquery;
   }
 
-  vcl_string GetQuery()
+  std::string GetQuery()
   {
 	  return query;
   }
@@ -106,75 +107,76 @@ protected:
 private:
 
   // Helper methods
-    void toLower(vcl_string origstr, vcl_string& newstr);
+    void toLower(std::string origstr, std::string& newstr);
 
-    void toUpper(vcl_string origstr, vcl_string& newstr);
+    void toUpper(std::string origstr, std::string& newstr);
 
-    char* ProduceQuery(vcl_string& string, bool asObject,
-    		             bool asSubject, vcl_string Predicate);
+    char* ProduceQuery(std::string& string, bool asObject,
+    		             bool asSubject, std::string Predicate);
 
-    void removeLeadingFollowingSpace(vcl_string& origstr);
+    void removeLeadingFollowingSpace(std::string& origstr);
 
 //BTX
 
-    int AddQueryResult(vcl_string &text, vcl_vector< vcl_string >& store);
+    int AddQueryResult(std::string &text, std::vector< std::string >& store);
 
-    vcl_string GetDBSubject(vcl_string& query, vtk_sqlite3* ptrDB);
+    std::string GetDBSubject(std::string& query, vtk_sqlite3* ptrDB);
 
     ///////////////////////////////////////////////////////////////////////////////
     void SyncModelWithDB(vtkMRMLModelHierarchyNode *modelNode, vtk_sqlite3* ptrDB,
-     		  vcl_vector< vcl_string > &possibleMatches);
+     		  std::vector< std::string > &possibleMatches);
 
-    int ProcessSingleQuery(vcl_string& query, vtk_sqlite3* ptrDB,
-    		vcl_vector< vcl_string > &queryResults,
-    		vcl_vector< vcl_string > &displayTerms);
+    int ProcessSingleQuery(std::string& query, vtk_sqlite3* ptrDB,
+    		std::vector< std::string > &queryResults,
+    		std::vector< std::string > &displayTerms);
 
 
     int RecursiveProcessQuery(char* queryText, vtk_sqlite3* ptrDB,
   		  	  	  	  	  	bool queryAsSubject,
-  		                    vcl_vector< vcl_string> &displayTerms);
+  		                    std::vector< std::string> &displayTerms);
 
 
     // Cache management -- currently commented out in the cxx file. HV
-    int ManageQueryCache(vcl_vector< vcl_string >& queries,
-  		  vcl_string query, vcl_vector< vcl_string> & queryResults);
+    int ManageQueryCache(std::vector< std::string >& queries,
+  		  std::string query, std::vector< std::string> & queryResults);
 
 
  //ETX
 private:
 
  //BTX
-  vcl_string                             dbFileName;
-  vcl_string                             query;
+  std::string                             dbFileName;
+  std::string                             query;
 
-  vcl_vector < vcl_string >              recursionPredicates;
+  std::vector < std::string >              recursionPredicates;
 
-  vcl_vector< vcl_string >               addRecursionPredicates;
+  std::vector< std::string >               addRecursionPredicates;
 
-  vcl_vector< vcl_string >               ignorePredicates;
+  std::vector< std::string >               ignorePredicates;
 
-  vcl_vector< vcl_string >               commentPredicates;
+  std::vector< std::string >               commentPredicates;
 
    // do we cache results? How much?
-  std::multimap< vcl_string, int > queryCacheMap;
-  vcl_vector< vcl_string > queryResultCache;
+  std::multimap< std::string, int > queryCacheMap;
+  std::vector< std::string > queryResultCache;
 
-  vcl_map< vcl_string, vcl_string> eqQueryMap;
+  std::map< std::string, std::string> eqQueryMap;
 
   // how often is a specific query accessed. The least frequent query is the one that
   // is removed from the cache first
-  vcl_map< vcl_string, int  >          queryResultAge;
+  std::map< std::string, int  >          queryResultAge;
 
-  vcl_vector< vcl_string >             resultsForDisplay;
+  std::vector< std::string >             resultsForDisplay;
 
-    std::multimap< vcl_string, vcl_string >             mrmlDBTerms;
+  std::multimap< std::string, std::string >             mrmlDBTerms;
 
-  vcl_vector< vcl_string >             nonDBElements; // these are models that are added by the user to the scene
+  std::vector< std::string >             nonDBElements; // these are models that are added by the user to the scene
 //ETX
   int                                  maxQueryHistory;
 
   int                                  cacheSize;
 
+  bool                                 setValidDBFileName;
   // private methods
   vtkSlicerFacetedVisualizerLogic(const vtkSlicerFacetedVisualizerLogic&); // Not implemented
   void operator=(const vtkSlicerFacetedVisualizerLogic&);               // Not implemented
