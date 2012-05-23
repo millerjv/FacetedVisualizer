@@ -39,7 +39,7 @@
 
 
 #include "vtk_sqlite3.h"
-//#include "C:/NAMIC/Slicer4-SuperBuild-Debug/VTK/Utilities/vtksqlite/vtk_sqlite3.h"
+
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerFacetedVisualizerLogic);
 
