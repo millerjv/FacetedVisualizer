@@ -39,6 +39,7 @@
 
 
 #include "vtk_sqlite3.h"
+//#include "C:/NAMIC/Slicer4-SuperBuild-Debug/VTK/Utilities/vtksqlite/vtk_sqlite3.h"
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerFacetedVisualizerLogic);
 
@@ -135,7 +136,12 @@ void vtkSlicerFacetedVisualizerLogic::toLower(std::string origstr, std::string& 
    newstr = "";
    for (unsigned int i = 0; i < origstr.length(); i++)
    {
-      newstr += std::tolower(origstr[i], loc);
+#ifdef WIN32
+      newstr += std::tolower(origstr[i]);
+#else
+	  newstr += std::tolower(origstr[i],loc);
+#endif
+	   
    }
 }
 
@@ -146,7 +152,11 @@ void vtkSlicerFacetedVisualizerLogic::toUpper(std::string origstr, std::string& 
    newstr = "";
    for (unsigned int i = 0; i < origstr.length(); i++)
    {
-      newstr += std::toupper(origstr[i], loc);
+#ifdef WIN32
+      newstr += std::toupper(origstr[i]);
+#else
+	  newstr += std::toupper(origstr[i],loc);
+#endif
    }
 }
 
