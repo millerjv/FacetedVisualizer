@@ -34,9 +34,6 @@ if(NOT Slicer_SOURCE_DIR)
 
   set(MODULE_LICENSE_FILE ${Slicer_LICENSE_FILE})
   set(MODULE_README_FILE ${Slicer_README_FILE})
-
-  include(SlicerEnableExtensionTesting)
-
 endif()
 
 
