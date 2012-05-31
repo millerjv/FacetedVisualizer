@@ -114,8 +114,8 @@
              <rect>
               <x>10</x>
               <y>130</y>
-              <width>654</width>
-              <height>281</height>
+              <width>601</width>
+              <height>211</height>
              </rect>
             </property>
             <property name="text" stdset="0">
@@ -126,8 +126,8 @@
               <rect>
                <x>10</x>
                <y>30</y>
-               <width>351</width>
-               <height>211</height>
+               <width>311</width>
+               <height>161</height>
               </rect>
              </property>
              <property name="mouseTracking">
@@ -142,20 +142,26 @@
              <property name="alternatingRowColors">
               <bool>true</bool>
              </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::MultiSelection</enum>
+             </property>
              <property name="selectionBehavior">
               <enum>QAbstractItemView::SelectRows</enum>
              </property>
              <property name="wordWrap">
               <bool>true</bool>
              </property>
+             <attribute name="headerVisible">
+              <bool>false</bool>
+             </attribute>
             </widget>
             <widget class="QPlainTextEdit" name="plainTextEditCommentBox">
              <property name="geometry">
               <rect>
-               <x>380</x>
-               <y>70</y>
+               <x>330</x>
+               <y>50</y>
                <width>261</width>
-               <height>131</height>
+               <height>111</height>
               </rect>
              </property>
              <property name="readOnly">
@@ -168,8 +174,8 @@
             <widget class="QLabel" name="label_comment">
              <property name="geometry">
               <rect>
-               <x>380</x>
-               <y>50</y>
+               <x>330</x>
+               <y>30</y>
                <width>171</width>
                <height>20</height>
               </rect>
@@ -182,25 +188,171 @@
            <widget class="ctkCollapsibleButton" name="CollapsibleButton_2" native="true">
             <property name="geometry">
              <rect>
-              <x>0</x>
-              <y>390</y>
-              <width>631</width>
+              <x>10</x>
+              <y>350</y>
+              <width>311</width>
               <height>171</height>
              </rect>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::ClickFocus</enum>
+            </property>
+            <property name="acceptDrops">
+             <bool>true</bool>
+            </property>
             <property name="text" stdset="0">
-             <string>QueryLog</string>
+             <string>Query History</string>
             </property>
             <widget class="QTreeView" name="treeViewQueryLog">
              <property name="geometry">
               <rect>
-               <x>20</x>
+               <x>10</x>
                <y>30</y>
-               <width>351</width>
-               <height>121</height>
+               <width>281</width>
+               <height>131</height>
               </rect>
              </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::MultiSelection</enum>
+             </property>
+             <property name="rootIsDecorated">
+              <bool>false</bool>
+             </property>
+             <attribute name="headerVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="headerStretchLastSection">
+              <bool>false</bool>
+             </attribute>
             </widget>
+           </widget>
+           <widget class="ctkCollapsibleButton" name="CollapsibleButton_3" native="true">
+            <property name="geometry">
+             <rect>
+              <x>320</x>
+              <y>350</y>
+              <width>291</width>
+              <height>171</height>
+             </rect>
+            </property>
+            <property name="text" stdset="0">
+             <string>Favorite Queries</string>
+            </property>
+            <widget class="QTreeView" name="treeViewFavorites">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>30</y>
+               <width>271</width>
+               <height>131</height>
+              </rect>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::MultiSelection</enum>
+             </property>
+             <property name="rootIsDecorated">
+              <bool>false</bool>
+             </property>
+             <attribute name="headerVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="headerStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+            </widget>
+           </widget>
+           <widget class="QLabel" name="label_warning">
+            <property name="geometry">
+             <rect>
+              <x>390</x>
+              <y>50</y>
+              <width>201</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="palette">
+             <palette>
+              <active>
+               <colorrole role="WindowText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>255</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+               <colorrole role="Text">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>255</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="WindowText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>255</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+               <colorrole role="Text">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>255</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled>
+               <colorrole role="WindowText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>69</red>
+                  <green>69</green>
+                  <blue>69</blue>
+                 </color>
+                </brush>
+               </colorrole>
+               <colorrole role="Text">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>69</red>
+                  <green>69</green>
+                  <blue>69</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </disabled>
+             </palette>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="pushButton_favorites">
+            <property name="geometry">
+             <rect>
+              <x>140</x>
+              <y>90</y>
+              <width>191</width>
+              <height>32</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>AddQueryToFavorites</string>
+            </property>
            </widget>
           </widget>
          </item>
@@ -215,8 +367,8 @@
       <widget class="QLabel" name="label_query_2">
        <property name="geometry">
         <rect>
-         <x>50</x>
-         <y>40</y>
+         <x>30</x>
+         <y>340</y>
          <width>91</width>
          <height>21</height>
         </rect>
@@ -228,8 +380,8 @@
       <widget class="QLineEdit" name="lineEdit_mrml">
        <property name="geometry">
         <rect>
-         <x>170</x>
-         <y>40</y>
+         <x>140</x>
+         <y>340</y>
          <width>221</width>
          <height>21</height>
         </rect>
@@ -238,8 +390,8 @@
       <widget class="QLabel" name="label_query_3">
        <property name="geometry">
         <rect>
-         <x>30</x>
-         <y>90</y>
+         <x>10</x>
+         <y>370</y>
          <width>121</width>
          <height>21</height>
         </rect>
@@ -251,8 +403,8 @@
       <widget class="QLineEdit" name="lineEdit_DBatom">
        <property name="geometry">
         <rect>
-         <x>170</x>
-         <y>90</y>
+         <x>140</x>
+         <y>370</y>
          <width>221</width>
          <height>21</height>
         </rect>
@@ -261,8 +413,8 @@
       <widget class="QPushButton" name="pushButton_mrmlDB">
        <property name="geometry">
         <rect>
-         <x>20</x>
-         <y>140</y>
+         <x>410</x>
+         <y>360</y>
          <width>114</width>
          <height>32</height>
         </rect>
@@ -271,12 +423,72 @@
         <string>Apply</string>
        </property>
       </widget>
-      <widget class="QTreeView" name="treeViewResults_mrmlDB">
+      <widget class="QTreeView" name="treeViewAtlasModels">
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>200</y>
-         <width>351</width>
+         <y>30</y>
+         <width>281</width>
+         <height>251</height>
+        </rect>
+       </property>
+       <property name="mouseTracking">
+        <bool>true</bool>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::CurrentChanged|QAbstractItemView::DoubleClicked|QAbstractItemView::SelectedClicked</set>
+       </property>
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
+       <property name="rootIsDecorated">
+        <bool>true</bool>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="headerHidden">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_query_4">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>0</y>
+         <width>221</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Match atlas model to DB atoms</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_query_5">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>290</y>
+         <width>91</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Atlas Models</string>
+       </property>
+      </widget>
+      <widget class="QTreeView" name="treeViewDBElements">
+       <property name="geometry">
+        <rect>
+         <x>340</x>
+         <y>30</y>
+         <width>281</width>
          <height>251</height>
         </rect>
        </property>
@@ -299,17 +511,17 @@
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QLabel" name="label_query_4">
+      <widget class="QLabel" name="label_query_6">
        <property name="geometry">
         <rect>
-         <x>180</x>
-         <y>10</y>
-         <width>221</width>
+         <x>400</x>
+         <y>290</y>
+         <width>191</width>
          <height>21</height>
         </rect>
        </property>
        <property name="text">
-        <string>Match atlas model to DB atoms</string>
+        <string>Possible Matching DB Items</string>
        </property>
       </widget>
      </widget>
