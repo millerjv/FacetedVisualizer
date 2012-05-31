@@ -22,6 +22,7 @@
 #include <QtGui>
 #include <QTreeView>
 #include <QStandardItemModel>
+#include <QPalette>
 //#include <QItemSelectionModel>
 
 // SlicerQt includes
@@ -99,10 +100,26 @@ void qSlicerFacetedVisualizerModuleWidget::setup()
    connect(d->pushButton_mrmlDB, SIGNAL(clicked()), this, SLOT( onMatchDBMRMLAtom()));
    connect(d->lineEdit_mrml, SIGNAL(textChanged(const QString&)),
 		   this, SLOT( onMRMLAtomChanged(const QString &)));
+   connect(d->pushButton_favorites, SIGNAL(clicked()), this, SLOT(onCheckedFavorites()));
+
+	favoritesModel = new QStandardItemModel;
+
 
    this->Superclass::setup();
   
 }
+
+
+void qSlicerFacetedVisualizerModuleWidget::onCheckedFavorites()
+{
+	Q_D(qSlicerFacetedVisualizerModuleWidget);
+
+	vtkSlicerFacetedVisualizerLogic *logic = d->logic();
+	// append the favorite to the favorites tree
+	std::string q = logic->GetQuery();
+	this->appendToFavorites(q);
+}
+
 
 //-----------------------------------------------------------------------------
 void qSlicerFacetedVisualizerModuleWidget::onOntologyFileName()
@@ -122,6 +139,9 @@ void qSlicerFacetedVisualizerModuleWidget::onOntologyFileName()
 
    logic->SynchronizeAtlasWithDB(this->matchingDBAtoms, this->unMatchedMRMLAtoms);
 
+   // add the results of the mrmlElements to the mrmlTree
+   this->updateAtlasNodesTree();
+
    this->readyNextMRMLDBAtomMatch = true;
    int count = 0;
 
@@ -132,7 +152,7 @@ void qSlicerFacetedVisualizerModuleWidget::onOntologyFileName()
 		 this->readyNextMRMLDBAtomMatch = false;
 		 this->selectedMRMLAtomIndex = count;
 
-		 this->GetUserMatchesForMRMLTerms(unMatchedMRMLAtoms[count]);
+		 //this->GetUserMatchesForMRMLTerms(unMatchedMRMLAtoms[count]);
 	  }
    }
    std::cout<<" Done syncrhonizing atlas with DB... "<<std::endl;
@@ -160,7 +180,19 @@ void qSlicerFacetedVisualizerModuleWidget::onQuery()
 	// todo: need a QDialog here that tells the user that they need to set the DB file
 	if(!this->setDBFile)
 	{
-		return;
+		QString warningText = "< font color = 'red'>Database file not set</font>";
+		d->label_warning->setText(warningText);
+		QPalette pal;
+		pal.setColor(QPalette::Text, Qt::red);
+		d->label_warning->setPalette(pal);
+	}
+	else
+	{
+		QString warningText = "";
+		d->label_warning->setText(warningText);
+		QPalette pal;
+		pal.setColor(QPalette::Text, Qt::red);
+		d->label_warning->setPalette(pal);
 	}
 	bool visualizedResults = logic->ProcessQuery();
 
@@ -189,9 +221,44 @@ void qSlicerFacetedVisualizerModuleWidget::onQueryLogItemSelected(const QItemSel
 {
 
 	Q_D(qSlicerFacetedVisualizerModuleWidget);
-	const QModelIndex index = d->treeViewQueryLog->selectionModel()->currentIndex();
-	QString selectedText = index.data(Qt::DisplayRole).toString();
+	QList< QModelIndex> selectedIndices = d->treeViewQueryLog->selectionModel()->selectedIndexes();
+	QString selectedText = "";
+	for (int i = 0; i < selectedIndices.size(); ++i)
+	{
+		const QModelIndex index = selectedIndices[i];
+		QString text = index.data(Qt::DisplayRole).toString();
+		selectedText += text;
+		if(i < selectedIndices.size()-1)
+		{
+			selectedText += "+";
+		}
+	}
 
+	d->lineEdit_query->setText(selectedText);
+}
+
+
+void qSlicerFacetedVisualizerModuleWidget::onFavoritesItemSelected(const QItemSelection &,
+		const QItemSelection &)
+{
+
+	Q_D(qSlicerFacetedVisualizerModuleWidget);
+	//const QModelIndex index = d->treeViewFavorites->selectionModel()->currentIndex();
+	QList< QModelIndex> selectedIndices = d->treeViewFavorites->selectionModel()->selectedIndexes();
+	QString selectedText = "";
+
+	for (int i = 0; i < selectedIndices.size(); ++i)
+	{
+	  const QModelIndex index = selectedIndices[i];//d->treeViewResults->selectionModel()->currentIndex();
+
+	  QString text = index.data(Qt::DisplayRole).toString();
+	  selectedText += text;
+
+	  if(i < selectedIndices.size()-1)
+	  {
+		  selectedText += "+";
+	  }
+	}
 	d->lineEdit_query->setText(selectedText);
 }
 
@@ -207,29 +274,41 @@ void qSlicerFacetedVisualizerModuleWidget::onTreeItemSelected(const QItemSelecti
 
 
 	Q_D(qSlicerFacetedVisualizerModuleWidget);
-	const QModelIndex index = d->treeViewResults->selectionModel()->currentIndex();
 
-	QString selectedText = index.data(Qt::DisplayRole).toString();
+	QList< QModelIndex> selectedIndices = d->treeViewResults->selectionModel()->selectedIndexes();
+	QString text = "";
 
-	// we need to get the selection's parent to update the query correctly
-	// change the query edit box
-	// for now we assume that we don't go down multiple hierarchies and will just seek one parent up
-
-	QString text = selectedText;
-	QModelIndex seekroot = index.parent();
-	QModelIndex currParent = index.parent();
-	while(seekroot.parent() != QModelIndex())
+	for (int i = 0; i < selectedIndices.size(); ++i)
 	{
+	  const QModelIndex index = selectedIndices[i];//d->treeViewResults->selectionModel()->currentIndex();
+
+	  QString selectedText = index.data(Qt::DisplayRole).toString();
+
+	  // we need to get the selection's parent to update the query correctly
+	  // change the query edit box
+	  QModelIndex seekroot = index.parent();
+	  QModelIndex currParent = index.parent();
+	  while(seekroot.parent() != QModelIndex())
+	  {
 		currParent = seekroot;
 		seekroot = seekroot.parent();
-	}
-	QString parentText = currParent.data(Qt::DisplayRole).toString();
-	std::cout<<"Selected text "<<selectedText.toStdString()<<" parent node "<<parentText.toStdString()<<std::endl;
-	std::string ptext = parentText.toStdString();
-	size_t pos = ptext.find("-");
-	if(pos == std::string::npos)
-	{
-		text = parentText+";"+text;
+	  }
+	  QString parentText = currParent.data(Qt::DisplayRole).toString();
+	  std::cout<<"Selected text "<<selectedText.toStdString()<<" parent node "<<parentText.toStdString()<<std::endl;
+	  std::string ptext = parentText.toStdString();
+	  size_t pos = ptext.find("-");
+	  if(pos == std::string::npos)
+	  {
+	 	text += parentText+";"+selectedText;
+	  }
+	  else
+	  {
+		  text += selectedText;
+	  }
+	  if(i < selectedIndices.size()-1)
+	  {
+		  text += "+";
+	  }
 	}
 	d->lineEdit_query->setText(text);
 }
@@ -314,6 +393,33 @@ void qSlicerFacetedVisualizerModuleWidget::UpdateResultsTree(bool visualizedResu
 }
 
 
+void qSlicerFacetedVisualizerModuleWidget::appendToFavorites(std::string& text)
+{
+   Q_D(qSlicerFacetedVisualizerModuleWidget);
+
+   bool found = false;
+   for (unsigned i = 0; !found && i < this->favoriteQueries.size(); ++i)
+   {
+	   found = this->favoriteQueries[i] == text;
+   }
+   if(!found)
+   {
+	   this->favoriteQueries.push_back(text);
+	   QStandardItem *favoritesRootNode = this->favoritesModel->invisibleRootItem();
+
+	   QStandardItem *qItem = new QStandardItem(QString::fromStdString(text));
+	   favoritesRootNode->appendRow(qItem);
+	   d->treeViewFavorites->setModel(favoritesModel);
+	   d->treeViewFavorites->expandAll();
+
+	   QItemSelectionModel *selectionModel = d->treeViewFavorites->selectionModel();
+	   connect (selectionModel, SIGNAL(selectionChanged(const QItemSelection &,
+	   				  const QItemSelection &)), this,
+	   				  SLOT(onFavoritesItemSelected(const QItemSelection &, const QItemSelection &)));
+   }
+
+}
+
 void qSlicerFacetedVisualizerModuleWidget::UpdateQueryLogView()
 {
 	Q_D(qSlicerFacetedVisualizerModuleWidget);
@@ -337,6 +443,57 @@ void qSlicerFacetedVisualizerModuleWidget::UpdateQueryLogView()
 }
 
 
+//---------------------------------------------------------------------------------
+void qSlicerFacetedVisualizerModuleWidget::
+updateAtlasNodesTree()
+{
+
+	Q_D(qSlicerFacetedVisualizerModuleWidget);
+
+	QStandardItemModel *standardModel = new QStandardItemModel;
+	QStandardItem *rootNode = standardModel->invisibleRootItem();
+
+	for (unsigned int i = 0; i < this->unMatchedMRMLAtoms.size(); ++i)
+	{
+		QStandardItem *qItem = new QStandardItem(QString::fromStdString(unMatchedMRMLAtoms[i]));
+		rootNode->appendRow(qItem);
+	}
+	d->treeViewAtlasModels->setModel(standardModel);
+	d->treeViewAtlasModels->expandAll();
+
+	QItemSelectionModel *selectionModel = d->treeViewAtlasModels->selectionModel();
+	connect( selectionModel, SIGNAL(selectionChanged(const QItemSelection &,
+			const QItemSelection&)), this,
+			SLOT(onAtlasNodeSelectionChanged(const QItemSelection &, const QItemSelection &)));
+}
+
+
+void qSlicerFacetedVisualizerModuleWidget::
+onAtlasNodeSelectionChanged(const QItemSelection&, const QItemSelection&)
+{
+	// find the index of the the selected node and show the corresponding DB Items
+	Q_D(qSlicerFacetedVisualizerModuleWidget);
+	const QModelIndex index = d->treeViewAtlasModels->selectionModel()->currentIndex();
+
+	QString selectedText = index.data(Qt::DisplayRole).toString();
+	// get the corresponding index for this text
+	int indx = -1;
+	for (unsigned i = 0; indx == -1 && i < this->unMatchedMRMLAtoms.size(); ++i)
+	{
+		if(this->unMatchedMRMLAtoms[i] == selectedText.toStdString())
+		{
+			indx = i;
+		}
+	}
+	if(indx != -1)
+	{
+		this->selectedMRMLAtomIndex = indx;
+	}
+	// show the text in the atlas model area
+	this->GetUserMatchesForMRMLTerms(selectedText.toStdString());
+	this->onMRMLAtomChanged(selectedText);
+
+}
 
 //-----------------------------------------------------------------------------
 // this is a helper for allowing syncing models with database. This is used when the
@@ -372,7 +529,7 @@ void qSlicerFacetedVisualizerModuleWidget::onMatchingDBItemSelected(const QItemS
 {
 
 	Q_D(qSlicerFacetedVisualizerModuleWidget);
-	const QModelIndex index = d->treeViewResults_mrmlDB->selectionModel()->currentIndex();
+	const QModelIndex index = d->treeViewDBElements->selectionModel()->currentIndex();
 
 	QString selectedText = index.data(Qt::DisplayRole).toString();
 
@@ -409,10 +566,10 @@ void qSlicerFacetedVisualizerModuleWidget::onMRMLAtomChanged(const QString &text
 	QStandardItem *resItem = new QStandardItem(lastItem);
 	qItem->appendRow(resItem);
 	rootNode->appendRow(qItem);
-	d->treeViewResults_mrmlDB->setModel(standardModel);
-	d->treeViewResults_mrmlDB->expandAll();
+	d->treeViewDBElements->setModel(standardModel);
+	d->treeViewDBElements->expandAll();
 
-	QItemSelectionModel *selectionModel = d->treeViewResults_mrmlDB->selectionModel();
+	QItemSelectionModel *selectionModel = d->treeViewDBElements->selectionModel();
 	connect(selectionModel, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection &)),
 			this, SLOT (onMatchingDBItemSelected(const QItemSelection&, const QItemSelection& )));
 
