@@ -61,6 +61,11 @@ public slots:
 
    void onMRMLAtomChanged(const QString &text);
 
+   void onAtlasNodeSelectionChanged(const QItemSelection&, const QItemSelection&);
+
+   void onFavoritesItemSelected(const QItemSelection &, const QItemSelection &);
+
+   void onCheckedFavorites();
 
 protected:
   QScopedPointer<qSlicerFacetedVisualizerModuleWidgetPrivate> d_ptr;
@@ -77,6 +82,10 @@ private:
 
   void UpdateQueryLogView();
 
+  void updateAtlasNodesTree();
+
+  void appendToFavorites(std::string& text);
+
   bool readyNextMRMLDBAtomMatch;
 
   unsigned int  selectedMRMLAtomIndex;
@@ -85,8 +94,13 @@ private:
 
   std::string DBAtom;
 
+  QStandardItemModel *favoritesModel;
+
+  //QStandardItem      *favoritesRootNode;
   //BTX
    std::list< std::string >         queryLog;
+
+   std::vector< std::string >         favoriteQueries;
 
    std::vector< std::vector< std::string > > matchingDBAtoms;
    std::vector< std::string > unMatchedMRMLAtoms;
