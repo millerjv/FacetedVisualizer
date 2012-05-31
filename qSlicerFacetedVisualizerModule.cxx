@@ -69,11 +69,17 @@ qSlicerFacetedVisualizerModule::~qSlicerFacetedVisualizerModule()
 QString qSlicerFacetedVisualizerModule::helpText()const
 {
   QString help = 
-    "This template module is meant to be used with the"
-    "with the ModuleWizard.py script distributed with the"
-    "Slicer source code (starting with version 4)."
-    "Developers can generate their own source code using the"
-    "wizard and then customize it to fit their needs.";
+	"This module allows users to visualize 3D atlas and 3D models in a scene by"
+    "combining the atlas and the models with an ontology. The module enables "
+    "flexible visualization by using faceted search on the ontology. Although, "
+    "this module can be used without an ontology to just visualize the user created models."
+	"To use this module, first load a mrml Scene, and add all the 3D models. Then "
+	"load a .sqlite3 database file that contains the ontology. A query string can "
+	"then be used to produce the visualizations. The module supports simple queries"
+	"(ex. 'putamen', 'cingulate gyrus'), complex queries (e.g. 'liver + kidney', or 'liver, kidney')"
+	", and specialized queries (e.g. 'liver;arterial supply'). The specialized queries essentially"
+    "involve 'AND' on the query.";
+
   return help;
 }
 
