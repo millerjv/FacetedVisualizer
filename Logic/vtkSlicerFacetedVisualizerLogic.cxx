@@ -470,6 +470,7 @@ void vtkSlicerFacetedVisualizerLogic::SyncModelWithDB(vtkMRMLModelHierarchyNode 
 	   // parse the query string into individual parts
 	   std::cout<<" inserting into modelDB pair "<<modelName<<" : "<<modelNode->GetName()<<std::endl;
 	   mrmlDBTerms.insert(std::pair< std::string, std::string > (this->GetDBSubject(modelName, ptrDB), modelNode->GetName()));
+       possibleMatchingDBEntries.push_back(this->GetDBSubject(modelName, ptrDB));
    }
    else if(individualStrings.size() > 0)
    {
@@ -526,9 +527,14 @@ void vtkSlicerFacetedVisualizerLogic::SyncModelWithDB(vtkMRMLModelHierarchyNode 
 //------------------------------------------------------------------------------------
 void vtkSlicerFacetedVisualizerLogic
 ::SynchronizeAtlasWithDB(std::vector< std::vector< std::string > > &matchingDBAtoms,
-		std::vector< std::string > &unMatchedMRMLAtoms)
+		std::vector< std::string > &MRMLAtoms)
 {
    
+
+	matchingDBAtoms.clear();
+	MRMLAtoms.clear();
+	this->nonDBElements.clear();
+	this->mrmlDBTerms.clear();
 
    std::vector< std::string > DBModelNodes;
    // get the models in the atlas
@@ -548,6 +554,7 @@ void vtkSlicerFacetedVisualizerLogic
        std::string modelName = modelNode->GetName();
        this->AddQueryResult(modelName, this->nonDBElements);
      }
+
      return;
    }
    else
@@ -567,6 +574,7 @@ void vtkSlicerFacetedVisualizerLogic
        {
     	   std::string nodeID = modelNode->GetAssociatedNodeID();
     	   this->AddQueryResult(nodeID, DBModelNodes);
+
        }
        else
        {
@@ -584,11 +592,12 @@ void vtkSlicerFacetedVisualizerLogic
        std::vector< std::string > possibleMatchingEntries;
        this->SyncModelWithDB(modelNode, ptrDB, possibleMatchingEntries);
        std::string modelName = modelNode->GetName();
-       if(possibleMatchingEntries.size() > 0)
-       {
+       //if(possibleMatchingEntries.size() > 0)
+       //{
          matchingDBAtoms.push_back(possibleMatchingEntries);
-         unMatchedMRMLAtoms.push_back(modelName);
-       }
+         MRMLAtoms.push_back(modelName);
+       //}
+
    }
 
    // close the database
