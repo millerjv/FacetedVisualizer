@@ -34,7 +34,7 @@ if(NOT Slicer_SOURCE_DIR)
   include(${Slicer_USE_FILE})
 
   set(MODULE_LICENSE_FILE "https://github.com/millerjv/FacetedVisualizer/blob/a4691acfe0ea72e321cbfe8cd3ca588f4f0ecd96/License.txt")
-  set(MODULE_README_FILE "https://github.com/millerjv/FacetedVisualizer/blob/a81d0515c60576577692c2165eb8267c8b71e82c/README.md")
+  set(MODULE_README_FILE "https://github.com/millerjv/FacetedVisualizer/blob/53c32959f81e2bf94724a9f601ade817e1e88164/README.md")
 endif()
 
 
