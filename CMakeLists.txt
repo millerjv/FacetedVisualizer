@@ -20,26 +20,28 @@ set(MODULE_NAME FacetedVisualizer)
 # Prerequisites
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
-  set(MODULE_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
+  set(MODULE_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Extensions/FacetedVisualizer")
   set(MODULE_CATEGORY "Informatics")
   set(MODULE_STATUS "Beta")
   set(MODULE_DESCRIPTION "Faceted visualizer that combines ontology with a 3D atlas")
-  set(MODULE_DEPENDS LoadableExtensionTemplate ) # Specified as a space separated list or 'NA' if any
+  set(MODULE_DEPENDS NA) # Specified as a space separated list or 'NA' if any
   set(MODULE_CONTRIBUTORS "Harini Veeraraghavan (GE)")
-  set(MODULE_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/LoadableExtensionTemplate/Resources/Icons/LoadableExtensionTemplate.png?revision=19437&view=co")
-  set(MODULE_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/4/42/Slicer-r19441-LoadableExtensionTemplate-screenshot.png")
+  set(MODULE_ICONURL "https://github.com/millerjv/FacetedVisualizer/blob/960b9540cb84431dae1258b7234af0ced462e815/Resources/Icons/FacetedVisualizer.png")
+  set(MODULE_SCREENSHOTURLS "http://www.slicer.org/slicerWiki/images/5/50/ComplexQueryWithImage.jpg http://www.slicer.org/slicerWiki/images/0/00/ComplexQueryAPI.jpg http://www.slicer.org/slicerWiki/images/f/f0/LimbicSystemWithImage.jpg")
+  set(MODULE_ACKNOWLEDGEMENTS "This work is part of the Neuroimage Analysis Center (NAC), an NIBIB National Resource Center, Grant P41 EB015902")
 
   find_package(Slicer REQUIRED)
   include(${Slicer_USE_FILE})
 
-  set(MODULE_LICENSE_FILE ${Slicer_LICENSE_FILE})
-  set(MODULE_README_FILE ${Slicer_README_FILE})
+  set(MODULE_LICENSE_FILE "https://github.com/millerjv/FacetedVisualizer/blob/a4691acfe0ea72e321cbfe8cd3ca588f4f0ecd96/License.txt")
+  set(MODULE_README_FILE "https://github.com/millerjv/FacetedVisualizer/blob/a81d0515c60576577692c2165eb8267c8b71e82c/README.md")
 endif()
 
 
 # Module name (usually identique to the directory name)
 #set(qt_module_name "FacetedVisualizer")
-set(qt_module_title "Faceted Atlas Visualizer")
+#set(qt_module_title "Faceted Atlas Visualizer")
+set(qt_module_title "Faceted Visualizer")
 
 # Build module sub libraries
 add_subdirectory(Logic)
