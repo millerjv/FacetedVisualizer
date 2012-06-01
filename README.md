@@ -11,7 +11,7 @@ This Extension is distributed under the Slicer License, see the included [Licens
 This module is based on the [Foundational Model of Anatomy (FMA) 3.0][FMA] from the Structural Informatics Group at the University of Washington. The FMA is covered by a [Creative Commons Attribution 3.0 Unported License (CC BY)][CC] license.
 
 [Slicer]: http://www.slicer.org/
-[License]: https://github.com/millerjv/FacetedVisualizer/blob/master/License.txt
+[License]: https://github.com/millerjv/FacetedVisualizer/blob/a4691acfe0ea72e321cbfe8cd3ca588f4f0ecd96/License.txt
 [FacetedVisualizer]: http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Extensions/FacetedVisualizer
 [FMA]: http://sig.biostr.washington.edu/projects/fm/
 [NAC]: http://nac.spl.harvard.edu/
