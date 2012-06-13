@@ -23,10 +23,10 @@ if(NOT Slicer_SOURCE_DIR)
   set(MODULE_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Extensions/FacetedVisualizer")
   set(MODULE_CATEGORY "Informatics")
   set(MODULE_STATUS "Beta")
-  set(MODULE_DESCRIPTION "Faceted visualizer that combines ontology with a 3D atlas")
+  set(MODULE_DESCRIPTION "Faceted search visualizer that combines an ontology with a 3D atlas")
   set(MODULE_DEPENDS NA) # Specified as a space separated list or 'NA' if any
   set(MODULE_CONTRIBUTORS "Harini Veeraraghavan (GE)")
-  set(MODULE_ICONURL "https://github.com/millerjv/FacetedVisualizer/blob/960b9540cb84431dae1258b7234af0ced462e815/Resources/Icons/FacetedVisualizer.png")
+  set(MODULE_ICONURL "https://github.com/millerjv/FacetedVisualizer/raw/960b9540cb84431dae1258b7234af0ced462e815/Resources/Icons/FacetedVisualizer.png")
   set(MODULE_SCREENSHOTURLS "http://www.slicer.org/slicerWiki/images/5/50/ComplexQueryWithImage.jpg http://www.slicer.org/slicerWiki/images/0/00/ComplexQueryAPI.jpg http://www.slicer.org/slicerWiki/images/f/f0/LimbicSystemWithImage.jpg")
   set(MODULE_ACKNOWLEDGEMENTS "This work is part of the Neuroimage Analysis Center (NAC), an NIBIB National Resource Center, Grant P41 EB015902")
 
