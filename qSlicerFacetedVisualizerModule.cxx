@@ -68,16 +68,16 @@ qSlicerFacetedVisualizerModule::~qSlicerFacetedVisualizerModule()
 //-----------------------------------------------------------------------------
 QString qSlicerFacetedVisualizerModule::helpText()const
 {
-  QString help = 
-	"This module allows users to visualize 3D atlas and 3D models in a scene by"
+  QString help =
+  "This module allows users to visualize 3D atlas and 3D models in a scene by"
     "combining the atlas and the models with an ontology. The module enables "
     "flexible visualization by using faceted search on the ontology. Although, "
     "this module can be used without an ontology to just visualize the user created models."
-	"To use this module, first load a mrml Scene, and add all the 3D models. Then "
-	"load a .sqlite3 database file that contains the ontology. A query string can "
-	"then be used to produce the visualizations. The module supports simple queries"
-	"(ex. 'putamen', 'cingulate gyrus'), complex queries (e.g. 'liver + kidney', or 'liver, kidney')"
-	", and specialized queries (e.g. 'liver;arterial supply'). The specialized queries essentially"
+  "To use this module, first load a mrml Scene, and add all the 3D models. Then "
+  "load a .sqlite3 database file that contains the ontology. A query string can "
+  "then be used to produce the visualizations. The module supports simple queries"
+  "(ex. 'putamen', 'cingulate gyrus'), complex queries (e.g. 'liver + kidney', or 'liver, kidney')"
+  ", and specialized queries (e.g. 'liver;arterial supply'). The specialized queries essentially"
     "involve 'AND' on the query.";
 
   return help;
@@ -86,16 +86,14 @@ QString qSlicerFacetedVisualizerModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerFacetedVisualizerModule::acknowledgementText()const
 {
-  return "This work was supported by NAMIC, NAC, and the Slicer Community...";
+  return "This work is part of the Neuroimage Analysis Center (NAC), an NIBIB National Resource Center, Grant P41 EB015902";
 }
 
 //-----------------------------------------------------------------------------
 QStringList qSlicerFacetedVisualizerModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Harini Veeraraghavan (General Electric Research)");
-  // moduleContributors << QString("Richard Roe (Other organization Inc.)");
-  // ...
+  moduleContributors << QString("Harini Veeraraghavan (GE)");
   return moduleContributors;
 }
 
