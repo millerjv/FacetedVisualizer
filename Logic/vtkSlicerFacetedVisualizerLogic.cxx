@@ -31,6 +31,7 @@
 
 // STD includes
 #include <cassert>
+#include <cstring>
 #include <string>
 #include <algorithm>
 #include <utility>
@@ -432,7 +433,7 @@ void vtkSlicerFacetedVisualizerLogic::SyncModelWithDB(vtkMRMLModelHierarchyNode 
 
 	   std::cout<<" leadstr "<<tmpstr<<std::endl;
 
-	   bool foundIgnore = std::strcmp(tmpstr.c_str(), "of") == 0;
+	   bool foundIgnore = strcmp(tmpstr.c_str(), "of") == 0;
 	   if(!foundIgnore)
 	   {
 		 individualStrings.push_back(tmpstr);
@@ -443,7 +444,7 @@ void vtkSlicerFacetedVisualizerLogic::SyncModelWithDB(vtkMRMLModelHierarchyNode 
 
 	   if(pos == std::string::npos)
 	   {
-		   foundIgnore = std::strcmp(trailstr.c_str(), "of") == 0;
+		   foundIgnore = strcmp(trailstr.c_str(), "of") == 0;
 		   if(!foundIgnore)
 		   {
 			   individualStrings.push_back(trailstr);
